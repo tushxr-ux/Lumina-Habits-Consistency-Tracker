@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8" />
+<meta content="width=device-width, initial-scale=1.0" name="viewport" />
+<title>Lumina Habits — Consistency Tracker</title>
+<link rel="icon" type="image/png" href="assets/logo.png" />
+
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+<script>
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          background: "#131315",
+          "on-background": "#e4e2e4",
+          surface: "#131315",
+          "surface-container-lowest": "#0e0e10",
+          "surface-container-low": "#1b1b1d",
+          "surface-container": "#1f1f21",
+          "surface-container-high": "#2a2a2b",
+          "surface-container-highest": "#353436",
+          "surface-variant": "#353436",
+          "on-surface": "#e4e2e4",
+          "on-surface-variant": "#c6c6cd",
+          outline: "#909097",
+          "outline-variant": "#45464d",
+          primary: "#bec6e0",
+          "on-primary": "#283044",
+          "primary-container": "#0f172a",
+          "on-primary-container": "#798098",
+          "primary-fixed": "#dae2fd",
+          "primary-fixed-dim": "#bec6e0",
+          secondary: "#bcc7de",
+          "on-secondary": "#263143",
+          "secondary-container": "#3e495d",
+          "on-secondary-container": "#aeb9d0",
+          tertiary: "#dec29a",
+          "on-tertiary": "#3e2d11",
+          "tertiary-container": "#231500",
+          "on-tertiary-container": "#957d5a",
+          error: "#ffb4ab",
+          "on-error": "#690005",
+          "error-container": "#93000a",
+          "on-error-container": "#ffdad6",
+          emerald: "#10B981",
+        },
+        borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+        spacing: {
+          "container-padding-mobile": "16px",
+          "container-padding-desktop": "32px",
+          "stack-gap-sm": "8px",
+          "stack-gap-md": "16px",
+          "stack-gap-lg": "24px",
+          gutter: "16px",
+        },
+        fontFamily: { sans: ["Inter", "sans-serif"] },
+      },
+    },
+  };
+</script>
+
+<link rel="stylesheet" href="style.css" />
+</head>
+
+<body class="bg-background text-on-surface antialiased min-h-screen flex flex-col relative">
+
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky bg-background z-40 pb-2 border-b border-white/5">
+  <div class="flex justify-between items-center px-container-padding-mobile md:px-container-padding-desktop h-16 w-full">
+    <div class="flex items-center gap-3">
+      <button id="back-btn" class="hidden w-9 h-9 items-center justify-center rounded-full hover:bg-surface-container-high transition-colors text-primary">
+        <span class="material-symbols-outlined">arrow_back</span>
+      </button>
+      <button id="menu-btn" class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors text-primary" aria-haspopup="true" aria-expanded="false" title="Menu">
+        <span class="material-symbols-outlined">menu</span>
+      </button>
+    </div>
+    <h1 class="font-semibold text-lg md:text-2xl text-primary tracking-tight flex items-center gap-2">
+      <img src="assets/logo.png" alt="Lumina Habits logo" class="w-7 h-7 rounded-md flex-shrink-0" />
+      <span id="header-title-text">Lumina Habits</span>
+    </h1>
+    <button id="theme-toggle" class="text-primary hover:opacity-80 transition-opacity" title="Toggle theme">
+      <span class="material-symbols-outlined">dark_mode</span>
+    </button>
+  </div>
+</header>
+
+<!-- Menu Bottom Sheet -->
+<div id="menu-sheet-overlay" class="hidden fixed inset-0 z-50 bg-black/50 transition-opacity" onclick="closeMenu()"></div>
+<div id="menu-sheet" class="fixed left-0 right-0 bottom-0 z-50 bg-surface-container rounded-t-2xl shadow-2xl sheet-closed" style="max-height:75vh;">
+  <div class="flex flex-col items-center pt-3 pb-1">
+    <div class="w-10 h-1.5 rounded-full bg-outline-variant"></div>
+  </div>
+  <div class="flex flex-col items-center gap-2 pb-4 px-6 pt-2">
+    <label for="menu-avatar-input" class="cursor-pointer relative" title="Tap to change photo">
+      <div id="menu-avatar" class="w-16 h-16 rounded-full bg-surface-container-high flex items-center justify-center text-3xl overflow-hidden">🙂</div>
+      <span class="absolute bottom-0 right-0 w-6 h-6 rounded-full bg-primary flex items-center justify-center pointer-events-none">
+        <span class="material-symbols-outlined text-on-primary text-[14px]">photo_camera</span>
+      </span>
+    </label>
+    <input id="menu-avatar-input" type="file" accept="image/*" class="hidden" onchange="handleAvatarUpload(event)" />
+    <p id="menu-profile-name" class="font-semibold text-on-surface"></p>
+  </div>
+  <div class="flex flex-col divide-y divide-outline-variant/40 border-t border-outline-variant overflow-y-auto" style="max-height:45vh;">
+    <button class="menu-item" onclick="closeMenu(); setView('profile')">
+      <span class="material-symbols-outlined">account_circle</span> Profile
+    </button>
+    <button class="menu-item" onclick="closeMenu(); setView('ai')">
+      <span class="material-symbols-outlined">smart_toy</span> AI Habit Coach
+    </button>
+    <button class="menu-item" onclick="closeMenu(); setView('diary')">
+      <span class="material-symbols-outlined">edit_note</span> Daily Diary
+    </button>
+    <button class="menu-item" onclick="closeMenu(); setView('weight')">
+      <span class="material-symbols-outlined">monitor_weight</span> Weight Tracker
+    </button>
+    <button class="menu-item" onclick="closeMenu(); setView('settings')">
+      <span class="material-symbols-outlined">settings</span> Settings
+    </button>
+  </div>
+  <div class="pb-safe"></div>
+</div>
+
+<!-- Main Content Canvas -->
+<main class="flex-1 px-container-padding-mobile md:px-container-padding-desktop md:py-8 pt-4 pb-32 md:pl-28">
+  <div class="max-w-3xl mx-auto flex flex-col gap-stack-lg">
+
+    <!-- ============ DASHBOARD VIEW ============ -->
+    <section id="view-dashboard" class="view flex flex-col gap-stack-lg">
+      <div class="flex justify-between items-end mb-2">
+        <div>
+          <h2 class="text-2xl md:text-3xl font-semibold text-on-surface">Today</h2>
+          <p class="text-on-surface-variant mt-1" id="today-date">Consistency is key.</p>
+        </div>
+        <div class="text-right">
+          <p class="text-sm font-medium text-secondary">Completion</p>
+          <p class="text-2xl font-semibold text-primary" id="today-completion">0%</p>
+        </div>
+      </div>
+
+      <div id="habit-list" class="flex flex-col gap-stack-md"></div>
+
+      <div id="empty-state" class="hidden flex-col items-center justify-center text-center py-20 gap-4">
+        <div class="w-16 h-16 rounded-full bg-surface-container-high flex items-center justify-center">
+          <span class="material-symbols-outlined text-3xl text-on-surface-variant">calendar_month</span>
+        </div>
+        <h3 class="text-xl font-semibold">Start your streak today</h3>
+        <p class="text-on-surface-variant max-w-xs">Track anything — coding, gym, reading — and watch your consistency build up.</p>
+        <button onclick="openModal()" class="mt-2 px-5 py-3 rounded-lg bg-primary text-on-primary font-medium hover:bg-primary-fixed transition-colors">+ Create your first habit</button>
+      </div>
+    </section>
+
+    <!-- ============ HABIT DETAIL VIEW ============ -->
+    <section id="view-detail" class="view hidden flex flex-col gap-stack-lg"></section>
+
+    <!-- ============ STATS VIEW ============ -->
+    <section id="view-stats" class="view hidden flex flex-col gap-stack-lg">
+      <h2 class="text-2xl md:text-3xl font-semibold text-on-surface -mb-2">Consistency Stats</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-stack-md" id="stats-summary"></div>
+      <div class="card-bg border rounded-xl p-5 md:p-6 flex flex-col gap-4">
+        <h3 class="text-lg font-semibold">Habit Breakdown (last 30 days)</h3>
+        <div id="stats-breakdown" class="flex flex-col gap-4"></div>
+      </div>
+    </section>
+
+    <!-- ============ SETTINGS VIEW ============ -->
+    <section id="view-settings" class="view hidden flex flex-col gap-stack-lg">
+      <h2 class="text-2xl md:text-3xl font-semibold text-on-surface -mb-2">Settings</h2>
+
+      <div class="card-bg border rounded-xl divide-y divide-outline-variant/40 overflow-hidden">
+        <div class="flex items-center justify-between p-4">
+          <div>
+            <p class="font-medium">Dark mode</p>
+            <p class="text-sm text-on-surface-variant">Lumina is designed dark-first for evening check-ins.</p>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input id="dark-toggle" type="checkbox" class="sr-only peer" checked />
+            <div class="w-11 h-6 bg-surface-variant rounded-full peer peer-checked:bg-emerald transition-colors"></div>
+            <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5"></div>
+          </label>
+        </div>
+        <div class="flex items-center justify-between p-4">
+          <div>
+            <p class="font-medium">Daily reminder</p>
+            <p class="text-sm text-on-surface-variant">Nudges you if a habit isn't checked in yet. Only fires while this tab is open.</p>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input id="reminder-toggle" type="checkbox" class="sr-only peer" />
+            <div class="w-11 h-6 bg-surface-variant rounded-full peer peer-checked:bg-emerald transition-colors"></div>
+            <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5"></div>
+          </label>
+        </div>
+        <div class="flex items-center justify-between p-4">
+          <div>
+            <p class="font-medium">Reminder time</p>
+            <p class="text-sm text-on-surface-variant">We'll check after this time each day.</p>
+          </div>
+          <input id="reminder-time" type="time" value="20:00" class="bg-surface border border-outline-variant rounded-lg px-3 py-2 text-on-surface" />
+        </div>
+        <div class="flex items-center justify-between p-4 cursor-pointer hover:bg-surface-container-high transition-colors" onclick="exportData('json')">
+          <div>
+            <p class="font-medium">Export data (JSON)</p>
+            <p class="text-sm text-on-surface-variant">Download all habits and check-in history.</p>
+          </div>
+          <span class="material-symbols-outlined text-on-surface-variant">download</span>
+        </div>
+        <div class="flex items-center justify-between p-4 cursor-pointer hover:bg-surface-container-high transition-colors" onclick="exportData('csv')">
+          <div>
+            <p class="font-medium">Export data (CSV)</p>
+            <p class="text-sm text-on-surface-variant">Spreadsheet-friendly check-in log.</p>
+          </div>
+          <span class="material-symbols-outlined text-on-surface-variant">table_chart</span>
+        </div>
+      </div>
+
+      <div class="card-bg border border-error/40 rounded-xl p-4 flex items-center justify-between">
+        <div>
+          <p class="font-medium text-error">Reset all data</p>
+          <p class="text-sm text-on-surface-variant">Deletes every habit and check-in permanently.</p>
+        </div>
+        <button onclick="resetAllData()" class="px-4 py-2 rounded-lg bg-error/10 text-error font-medium hover:bg-error/20 transition-colors">Reset</button>
+      </div>
+
+      <p class="text-center text-xs text-on-surface-variant/60 mt-4">Lumina Habits · all data stays on this device (localStorage)</p>
+    </section>
+
+    <!-- ============ PROFILE VIEW ============ -->
+    <section id="view-profile" class="view hidden flex flex-col gap-stack-lg"></section>
+
+    <!-- ============ AI HABIT COACH (CHAT) VIEW ============ -->
+    <section id="view-ai" class="view hidden flex flex-col gap-stack-md" style="height:calc(100vh - 220px); min-height:420px;">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary text-2xl">smart_toy</span>
+        <div>
+          <h2 class="text-xl font-semibold leading-tight">AI Habit Coach</h2>
+          <p class="text-xs text-on-surface-variant">On-device assistant that reads your habit data — not a connected AI model.</p>
+        </div>
+      </div>
+      <div id="chat-messages" class="flex-1 overflow-y-auto flex flex-col gap-3 card-bg border rounded-xl p-4"></div>
+      <div class="flex items-center gap-2">
+        <input id="chat-input" type="text" placeholder="Ask about your streaks, weight, or motivation..."
+          class="flex-1 bg-surface border border-outline-variant rounded-lg px-4 py-3 text-on-surface focus:outline-none focus:ring-2 focus:ring-primary placeholder-on-surface-variant/50" />
+        <button onclick="sendChatMessage()" aria-label="Send" class="w-12 h-12 flex items-center justify-center rounded-lg bg-primary text-on-primary hover:bg-primary-fixed transition-colors flex-shrink-0">
+          <span class="material-symbols-outlined">send</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ============ DAILY DIARY VIEW ============ -->
+    <section id="view-diary" class="view hidden flex flex-col gap-stack-lg"></section>
+
+    <!-- ============ WEIGHT TRACKER VIEW ============ -->
+    <section id="view-weight" class="view hidden flex flex-col gap-stack-lg">
+      <h2 class="text-2xl md:text-3xl font-semibold text-on-surface -mb-2">Weight Tracker</h2>
+      <div class="card-bg border rounded-xl p-5 flex flex-col gap-3">
+        <div class="flex items-end gap-3 flex-wrap">
+          <div class="flex flex-col gap-2 flex-1 min-w-[160px]">
+            <label class="text-sm font-medium text-on-surface-variant" for="weight-input">Today's weight (kg)</label>
+            <input id="weight-input" type="number" step="0.1" min="0" placeholder="e.g., 68.5"
+              class="w-full bg-surface border border-outline-variant rounded-lg px-4 py-3 text-on-surface focus:outline-none focus:ring-2 focus:ring-primary placeholder-on-surface-variant/50" />
+          </div>
+          <button onclick="saveWeightToday()" class="px-5 py-3 rounded-lg bg-primary text-on-primary font-medium hover:bg-primary-fixed transition-colors">Log Weight</button>
+        </div>
+      </div>
+      <div id="weight-chart-card" class="card-bg border rounded-xl p-5 flex flex-col gap-3"></div>
+      <div id="weight-history" class="flex flex-col gap-2"></div>
+    </section>
+
+  </div>
+</main>
+
+<!-- Floating Action Button -->
+<button id="fab" onclick="openModal()" aria-label="Add Habit" class="fixed right-6 md:right-12 bottom-28 md:bottom-12 w-14 h-14 bg-primary text-on-primary rounded-xl shadow-lg flex items-center justify-center hover:bg-primary-fixed transition-colors z-40">
+  <span class="material-symbols-outlined text-2xl">add</span>
+</button>
+
+<!-- BottomNavBar (Mobile) -->
+<nav class="md:hidden fixed bottom-0 w-full z-50 rounded-t-xl bg-surface-container shadow-lg">
+  <div class="flex justify-around items-center h-20 px-4 pb-safe">
+    <button data-view="dashboard" class="nav-btn flex flex-col items-center justify-center rounded-full px-4 py-1 transition-all">
+      <span class="material-symbols-outlined">home</span>
+      <span class="text-xs mt-1">Home</span>
+    </button>
+    <button data-view="stats" class="nav-btn flex flex-col items-center justify-center rounded-full px-4 py-1 transition-all">
+      <span class="material-symbols-outlined">insights</span>
+      <span class="text-xs mt-1">Stats</span>
+    </button>
+    <button data-view="settings" class="nav-btn flex flex-col items-center justify-center rounded-full px-4 py-1 transition-all">
+      <span class="material-symbols-outlined">settings</span>
+      <span class="text-xs mt-1">Settings</span>
+    </button>
+  </div>
+</nav>
+
+<!-- Side Nav (Desktop) -->
+<nav class="hidden md:flex flex-col fixed left-0 top-16 h-[calc(100vh-64px)] w-20 border-r border-white/5 py-8 items-center gap-4 z-30">
+  <button data-view="dashboard" class="nav-btn-side flex flex-col items-center justify-center w-12 h-12 rounded-xl transition-all" title="Home">
+    <span class="material-symbols-outlined">home</span>
+  </button>
+  <button data-view="stats" class="nav-btn-side flex flex-col items-center justify-center w-12 h-12 rounded-xl transition-all" title="Stats">
+    <span class="material-symbols-outlined">insights</span>
+  </button>
+  <button data-view="settings" class="nav-btn-side flex flex-col items-center justify-center w-12 h-12 rounded-xl transition-all mt-auto mb-4" title="Settings">
+    <span class="material-symbols-outlined">settings</span>
+  </button>
+</nav>
+
+<!-- New Habit Modal -->
+<div id="modal-overlay" class="hidden fixed inset-0 z-50 items-center justify-center p-4">
+  <div class="absolute inset-0 bg-background/80 backdrop-blur-sm" onclick="closeModal()"></div>
+  <div class="relative w-full max-w-lg bg-surface-container rounded-xl shadow-2xl border border-outline-variant overflow-hidden flex flex-col">
+    <div class="px-6 py-5 border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
+      <h2 class="text-xl font-semibold text-on-surface">New Habit</h2>
+      <button onclick="closeModal()" class="text-on-surface-variant hover:text-on-surface transition-colors">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <div class="px-6 py-6 flex flex-col gap-6 overflow-y-auto max-h-[60vh]">
+      <div class="flex flex-col gap-2">
+        <label class="text-sm font-medium text-on-surface-variant" for="habit-name">Habit Name</label>
+        <input id="habit-name" type="text" placeholder="e.g., Read for 30 minutes"
+          class="w-full bg-surface border border-outline-variant rounded-lg px-4 py-3 text-on-surface focus:outline-none focus:ring-2 focus:ring-primary placeholder-on-surface-variant/50" />
+      </div>
+
+      <div class="flex flex-col gap-3">
+        <label class="text-sm font-medium text-on-surface-variant">Category</label>
+        <div class="flex flex-wrap gap-2" id="category-picker">
+          <button type="button" data-cat="Health" class="cat-chip chip-health">Health</button>
+          <button type="button" data-cat="Work" class="cat-chip chip-work">Work</button>
+          <button type="button" data-cat="Mind" class="cat-chip chip-mind">Mind</button>
+          <button type="button" data-cat="Other" class="cat-chip chip-other">Other</button>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-3">
+        <label class="text-sm font-medium text-on-surface-variant">Accent Color</label>
+        <div class="flex gap-3" id="color-picker">
+          <button type="button" data-color="#10B981" class="color-dot" style="background:#10B981"></button>
+          <button type="button" data-color="#3B82F6" class="color-dot" style="background:#3B82F6"></button>
+          <button type="button" data-color="#A855F7" class="color-dot" style="background:#A855F7"></button>
+          <button type="button" data-color="#F43F5E" class="color-dot" style="background:#F43F5E"></button>
+          <button type="button" data-color="#F59E0B" class="color-dot" style="background:#F59E0B"></button>
+          <button type="button" data-color="#06B6D4" class="color-dot" style="background:#06B6D4"></button>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label class="text-sm font-medium text-on-surface-variant" for="target-streak">Target Streak (days, optional)</label>
+        <div class="relative">
+          <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">sports_score</span>
+          <input id="target-streak" type="number" placeholder="21"
+            class="w-full bg-surface border border-outline-variant rounded-lg pl-12 pr-4 py-3 text-on-surface focus:outline-none focus:ring-2 focus:ring-primary placeholder-on-surface-variant/50" />
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label class="text-sm font-medium text-on-surface-variant" for="target-freezes">Streak Freezes (optional)</label>
+        <div class="relative">
+          <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">ac_unit</span>
+          <input id="target-freezes" type="number" min="0" placeholder="3"
+            class="w-full bg-surface border border-outline-variant rounded-lg pl-12 pr-4 py-3 text-on-surface focus:outline-none focus:ring-2 focus:ring-primary placeholder-on-surface-variant/50" />
+        </div>
+        <p class="text-xs text-on-surface-variant/70">Freezes protect your streak on days you can't check in. Defaults to 3.</p>
+      </div>
+    </div>
+    <div class="px-6 py-5 border-t border-outline-variant bg-surface-container-low flex justify-end gap-3">
+      <button onclick="closeModal()" class="px-6 py-2 rounded-lg font-medium text-on-surface-variant hover:bg-surface-variant transition-colors">Cancel</button>
+      <button onclick="saveHabit()" class="px-6 py-2 rounded-lg font-medium bg-primary text-on-primary hover:bg-primary-fixed transition-colors shadow-sm">Save Habit</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

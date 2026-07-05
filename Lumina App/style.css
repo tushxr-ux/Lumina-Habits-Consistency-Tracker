@@ -1,0 +1,304 @@
+/* ===== Base ===== */
+body {
+  font-family: 'Inter', sans-serif;
+  min-height: max(884px, 100dvh);
+}
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+.hidden { display: none !important; }
+.view { animation: fadeIn 0.2s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ===== Cards ===== */
+.card-bg {
+  background-color: #1b1b1d;
+  border-color: #353436;
+}
+.habit-card {
+  background-color: #1b1b1d;
+  border: 1px solid #353436;
+}
+.shadow-hover:hover {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  transform: translateY(-2px);
+  transition: all 0.25s ease;
+}
+
+/* ===== Heatmap ===== */
+.heatmap-square {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  background-color: #353436;
+  flex-shrink: 0;
+}
+.heatmap-square.filled,
+.heatmap-square.status-done { background-color: #10B981; }
+.heatmap-square.status-frozen { background-color: #38bdf8; }
+.heatmap-square.status-missed { background-color: #f43f5e; }
+.heatmap-square.status-today-pending { background-color: #353436; box-shadow: inset 0 0 0 1px #909097; }
+.heatmap-square.status-future,
+.heatmap-square.status-before { background-color: #26262a; opacity: 0.5; }
+.heatmap-grid {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(7, 12px);
+  gap: 3px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+.legend-dot { width: 8px; height: 8px; border-radius: 2px; display: inline-block; }
+
+/* ===== Check-in button ===== */
+.check-btn {
+  border: 1px solid rgba(16, 185, 129, 0.5);
+  transition: all 0.2s ease;
+  background: transparent;
+}
+.check-btn:active { transform: scale(0.96); }
+.check-btn.completed {
+  background-color: #10B981;
+  border-color: #10B981;
+}
+.check-btn.frozen {
+  background-color: rgba(56, 189, 248, 0.15);
+  border-color: #38bdf8;
+}
+
+/* ===== Menu dropdown ===== */
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #e4e2e4;
+  transition: background-color 0.15s ease;
+}
+.menu-item:hover { background-color: #2a2a2b; }
+
+/* ===== Bottom sheet menu ===== */
+#menu-sheet {
+  transition: transform 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+  transform: translateY(0);
+}
+#menu-sheet.sheet-closed { transform: translateY(100%); }
+#menu-sheet-overlay { transition: opacity 0.2s ease; }
+
+/* ===== Toast ===== */
+.app-toast {
+  position: fixed;
+  bottom: 96px;
+  left: 50%;
+  transform: translate(-50%, 8px);
+  background-color: #2a2a2b;
+  color: #e4e2e4;
+  padding: 10px 18px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  z-index: 60;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+}
+.app-toast.visible { opacity: 1; transform: translate(-50%, 0); }
+
+/* ===== Chat bubbles (AI Habit Coach) ===== */
+.chat-bubble {
+  max-width: 85%;
+  padding: 10px 14px;
+  border-radius: 14px;
+  font-size: 14px;
+  line-height: 1.4;
+  white-space: pre-wrap;
+}
+.chat-bubble-bot {
+  align-self: flex-start;
+  background-color: #2a2a2b;
+  color: #e4e2e4;
+  border-bottom-left-radius: 4px;
+}
+.chat-bubble-user {
+  align-self: flex-end;
+  background-color: #3e495d;
+  color: #aeb9d0;
+  border-bottom-right-radius: 4px;
+}
+
+/* ===== Profile emoji picker ===== */
+.emoji-dot {
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  background-color: #2a2a2b;
+  border: 2px solid transparent;
+  transition: all 0.15s ease;
+}
+.emoji-dot:hover { transform: scale(1.08); }
+.emoji-dot.selected { border-color: #bec6e0; background-color: #3e495d; }
+
+/* ===== Category chips (badges on cards) ===== */
+.badge { padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.9; }
+.badge-health { background-color: #3e495d; color: #aeb9d0; }
+.badge-work   { background-color: #3e495d; color: #bec6e0; }
+.badge-mind   { background-color: #231500; color: #957d5a; }
+.badge-other  { background-color: #3b1f4d; color: #d6b3f0; }
+
+/* ===== Category picker chips (modal) ===== */
+.cat-chip {
+  padding: 8px 16px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 500;
+  border: 1px solid #45464d;
+  color: #c6c6cd;
+  transition: all 0.15s ease;
+}
+.cat-chip.selected.chip-health { background-color: #3e495d; color: #aeb9d0; border-color: #3e495d; }
+.cat-chip.selected.chip-work   { background-color: #3e495d; color: #bec6e0; border-color: #3e495d; }
+.cat-chip.selected.chip-mind   { background-color: #231500; color: #957d5a; border-color: #231500; }
+.cat-chip.selected.chip-other  { background-color: #3b1f4d; color: #d6b3f0; border-color: #3b1f4d; }
+
+/* ===== Color dots (modal) ===== */
+.color-dot {
+  width: 32px; height: 32px; border-radius: 9999px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+.color-dot:hover { transform: scale(1.1); }
+.color-dot.selected { border-color: #e4e2e4; box-shadow: 0 0 0 2px #131315, 0 0 0 4px #e4e2e4; }
+
+/* ===== Bottom / side nav ===== */
+.nav-btn {
+  color: #c6c6cd;
+  opacity: 0.6;
+}
+.nav-btn.active {
+  background-color: #3e495d;
+  color: #aeb9d0;
+  opacity: 1;
+}
+.nav-btn-side {
+  color: #c6c6cd;
+  opacity: 0.6;
+}
+.nav-btn-side.active {
+  background-color: #3e495d;
+  color: #aeb9d0;
+  opacity: 1;
+}
+
+/* ===== Stats bars ===== */
+.stat-bar-track { background-color: #353436; border-radius: 9999px; height: 8px; overflow: hidden; }
+.stat-bar-fill { height: 100%; border-radius: 9999px; transition: width 0.4s ease; }
+
+/* scrollbar for heatmap */
+.heatmap-grid::-webkit-scrollbar { height: 6px; }
+.heatmap-grid::-webkit-scrollbar-thumb { background: #353436; border-radius: 4px; }
+
+/* =========================================================
+   Light mode overrides
+   The Tailwind palette in index.html was authored dark-first
+   (light pastel text on a near-black background). These rules
+   re-map every one of those utility classes to readable
+   light-mode equivalents instead of leaving light text on
+   light backgrounds.
+   ========================================================= */
+html:not(.dark) body  { background-color: #f4f4f6 !important; color: #131315 !important; }
+html:not(.dark) header,
+html:not(.dark) main  { background-color: #f4f4f6 !important; }
+html:not(.dark) header.border-b  { border-bottom-color: rgba(0, 0, 0, 0.08) !important; }
+
+html:not(.dark) .card-bg,
+html:not(.dark) .habit-card  { background-color: #ffffff !important; border-color: #e2e2e7 !important; }
+
+/* text colors */
+html:not(.dark) .text-on-surface  { color: #131315 !important; }
+html:not(.dark) .text-on-surface-variant  { color: #5c5c66 !important; }
+html:not(.dark) .text-primary  { color: #3d4a6b !important; }
+html:not(.dark) .text-secondary  { color: #48546b !important; }
+html:not(.dark) .text-tertiary  { color: #8a6a34 !important; }
+html:not(.dark) .text-emerald  { color: #0d9668 !important; }
+html:not(.dark) .text-error  { color: #c4342a !important; }
+html:not(.dark) .text-on-primary  { color: #ffffff !important; }
+html:not(.dark) .text-on-secondary-container  { color: #2c3a52 !important; }
+
+/* backgrounds */
+html:not(.dark) .bg-primary  { background-color: #3d4a6b !important; }
+html:not(.dark) .bg-secondary-container  { background-color: #d8dfef !important; }
+html:not(.dark) .bg-surface  { background-color: #ffffff !important; }
+html:not(.dark) .bg-surface-container  { background-color: #ffffff !important; }
+html:not(.dark) .bg-surface-container-low  { background-color: #f7f7f9 !important; }
+html:not(.dark) .bg-surface-container-high  { background-color: #ececf1 !important; }
+html:not(.dark) .bg-surface-variant  { background-color: #d9dae2 !important; }
+
+/* error accents (base error color is a pale pink meant for dark bg —
+   nearly invisible on white, so it needs its own light values) */
+html:not(.dark) .bg-error\/10  { background-color: rgba(196, 52, 42, 0.08) !important; }
+html:not(.dark) .bg-error\/20  { background-color: rgba(196, 52, 42, 0.16) !important; }
+html:not(.dark) .border-error\/40  { border-color: rgba(196, 52, 42, 0.35) !important; }
+
+/* borders */
+html:not(.dark) .border-outline-variant,
+html:not(.dark) .divide-outline-variant > * + *  { border-color: #e2e2e7 !important; }
+
+/* inputs / placeholders */
+html:not(.dark) input,
+html:not(.dark) textarea  { color: #131315 !important; }
+html:not(.dark) .placeholder-on-surface-variant\/50::placeholder  { color: rgba(92, 92, 102, 0.55) !important; }
+
+/* nav (bottom + side) */
+html:not(.dark) .nav-btn,
+html:not(.dark) .nav-btn-side  { color: #5c5c66 !important; }
+html:not(.dark) .nav-btn.active,
+html:not(.dark) .nav-btn-side.active  { background-color: #d8dfef !important; color: #2c3a52 !important; }
+html:not(.dark) nav.bg-surface-container  { background-color: #ffffff !important; border-top: 1px solid #e2e2e7 !important; }
+html:not(.dark) nav.border-r  { border-color: #e2e2e7 !important; }
+
+/* color dot ring in the new-habit modal */
+html:not(.dark) .color-dot.selected  { border-color: #131315 !important; box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #131315 !important; }
+
+/* category chips (unselected state) */
+html:not(.dark) .cat-chip  { border-color: #d5d5db !important; color: #5c5c66 !important; }
+
+/* heatmap */
+html:not(.dark) .heatmap-square  { background-color: #e5e5ea !important; }
+html:not(.dark) .heatmap-square.status-done,
+html:not(.dark) .heatmap-square.filled  { background-color: #10B981 !important; }
+html:not(.dark) .heatmap-square.status-frozen  { background-color: #38bdf8 !important; }
+html:not(.dark) .heatmap-square.status-missed  { background-color: #f5a3a3 !important; }
+html:not(.dark) .heatmap-square.status-today-pending  { box-shadow: inset 0 0 0 1px #a9a9b3 !important; }
+html:not(.dark) .heatmap-square.status-future,
+html:not(.dark) .heatmap-square.status-before  { background-color: #eeeef2 !important; opacity: 1 !important; }
+
+/* stat bars */
+html:not(.dark) .stat-bar-track  { background-color: #e5e5ea !important; }
+
+/* menu dropdown */
+html:not(.dark) .menu-item  { color: #131315 !important; }
+html:not(.dark) .menu-item:hover  { background-color: #f4f4f6 !important; }
+
+/* profile emoji picker */
+html:not(.dark) .emoji-dot  { background-color: #ececf1 !important; }
+html:not(.dark) .emoji-dot.selected  { background-color: #d8dfef !important; border-color: #3d4a6b !important; }
+
+/* chat bubbles */
+html:not(.dark) .chat-bubble-bot  { background-color: #ececf1 !important; color: #131315 !important; }
+html:not(.dark) .chat-bubble-user  { background-color: #d8dfef !important; color: #2c3a52 !important; }
+
+/* toast */
+html:not(.dark) .app-toast  { background-color: #2a2a2b !important; color: #ffffff !important; }
+
+/* modal backdrop should stay dark-ish for contrast in both themes */
+html:not(.dark) #modal-overlay .bg-background\/80  { background-color: rgba(20, 20, 22, 0.55) !important; }
