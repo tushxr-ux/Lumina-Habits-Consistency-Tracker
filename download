@@ -1,0 +1,14 @@
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Editor/IDE
+.vscode/
+.idea/
+
+# Node (only relevant if you ever add tooling later)
+node_modules/
+npm-debug.log*
+
+# Local env files (not used by this app, but common to exclude)
+.env
